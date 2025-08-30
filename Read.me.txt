@@ -1,0 +1,70 @@
+Objective: Design and implement a simple microservices-based system using Java, Spring
+Boot, and Docker. The system will consist of multiple services that interact with each other and a
+database. This will help demonstrate your ability to work with modern Java frameworks,
+containerization, and microservices architecture.
+
+## Technologies Used
+
+- Java 17
+- Spring Boot
+- Spring Data JPA (MySQL) – Order service
+- Spring Data MongoDB – Product service
+- H2 Database – User service (for demo / local dev)
+- Spring Cloud OpenFeign – Service-to-service communication
+- Docker & Docker Compose
+- Swagger (OpenAPI 3) – API documentation
+- Maven – Build tool
+
+---
+
+## Services
+
+### 1. User Service
+- **Port:** 9001  
+- **Database:** H2 (in-memory, for demo)  
+- **Responsibilities:**
+  - Manage user information
+  - Provide user endpoints for other services via Feign client
+
+### 2. Order Service
+- **Port:** 9002  
+- **Database:** MySQL  
+- **Responsibilities:**
+  - Place and manage orders
+  - Interacts with User and Product services using Feign clients
+
+### 3. Product Service
+- **Port:** 9003  
+- **Database:** MongoDB  
+- **Responsibilities:**
+  - Manage product catalog
+  - Provide product endpoints for other services
+
+---
+
+## Docker Setup
+
+### Prerequisites
+- Docker
+- Docker Compose
+
+### Running the Services
+docker compose up --build
+
+MySQL on port 3307
+MongoDB on port 27017
+User service on port 9001
+Order service on port 9002
+Product service on port 9003
+
+
+## Swagger API Documentation
+
+Each service exposes Swagger UI:
+
+Service	Swagger URL
+User Service	http://localhost:9001/swagger-ui/index.html
+
+Order Service	http://localhost:9002/swagger-ui/index.html
+
+Product Service	http://localhost:9003/swagger-ui/index.html
