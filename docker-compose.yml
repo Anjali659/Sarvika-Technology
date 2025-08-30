@@ -1,0 +1,62 @@
+services:
+  # ==================== DATABASES ====================
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: orders
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppass
+    ports:
+      - "3307:3306"   # ✅ fixed
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  mongodb:
+    image: mongo:6.0
+    container_name: mongo_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  # ==================== SERVICES ====================
+  user-service:
+    build: ./user-services
+    container_name: user_service
+    ports:
+      - "9001:9001"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    # ✅ No DB config → will use H2
+
+  order-service:
+    build: ./order-services
+    container_name: order_service
+    ports:
+      - "9002:9002"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/orders
+      SPRING_DATASOURCE_USERNAME: appuser
+      SPRING_DATASOURCE_PASSWORD: apppass
+    depends_on:
+      - mysql
+      - user-service
+      - product-service
+
+  product-service:
+    build: ./product-services
+    container_name: product_service
+    ports:
+      - "9003:9003"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATA_MONGODB_URI: mongodb://mongo_db:27017/products
+    depends_on:
+      - mongodb
+
+volumes:
+  mysql_data:
+  mongo_data:

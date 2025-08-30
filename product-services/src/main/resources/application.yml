@@ -1,0 +1,26 @@
+server:
+  port: 9003
+
+spring:
+  application:
+    name: product-services
+
+  data:
+    mongodb:
+      host: localhost        # MongoDB host
+      port: 27017            # Default MongoDB port
+      database: college    # Database name
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false  # Store dates as ISO strings
+
+logging:
+  level:
+    org.springframework.data.mongodb.core: DEBUG
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html

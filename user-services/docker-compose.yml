@@ -1,0 +1,61 @@
+version: "3.9"
+services:
+  # ==================== DATABASES ====================
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: orders
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  mongodb:
+    image: mongo:6.0
+    container_name: mongo_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  # ==================== SERVICES ====================
+  user-service:
+    build: ./user-service
+    container_name: user_service
+    ports:
+      - "9001:9001"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  order-service:
+    build: ./order-service
+    container_name: order_service
+    ports:
+      - "9002:9002"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/orders
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      - mysql
+      - user-service
+
+  product-service:
+    build: ./product-service
+    container_name: product_service
+    ports:
+      - "9003:9003"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/products
+    depends_on:
+      - mongodb
+
+volumes:
+  mysql_data:
+  mongo_data:
